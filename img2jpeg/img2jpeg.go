@@ -36,12 +36,7 @@ func defaultOptions() ConvertOptions {
 }
 
 // Checks if the image is a png,jpeg,bmp,psd
-func IsValid(inputPath string) (bool, error) {
-	file, err := os.Open(inputPath)
-	if err != nil {
-		return false, err
-	}
-	defer file.Close()
+func IsValid(file *os.File) (bool, error) {
 	buff := make([]byte, 8)
 	n, err := file.Read(buff)
 	if err != nil {
@@ -67,6 +62,16 @@ func IsValid(inputPath string) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+// Checks if the image is a png,jpeg,bmp,psd
+func IsValidP(inputPath string) (bool, error) {
+	file, err := os.Open(inputPath)
+	if err != nil {
+		return false, err
+	}
+	defer file.Close()
+	return IsValid(file)
 }
 
 func ConvertToJpeg(inputPath, outputPath string, opts ...ConvertOptions) error {

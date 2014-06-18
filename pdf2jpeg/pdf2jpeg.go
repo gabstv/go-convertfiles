@@ -44,12 +44,18 @@ func defaultOptions() ConvertOptions {
 
 // Checks file signature
 // http://en.wikipedia.org/wiki/List_of_file_signatures
-func IsValid(inputPath string) (bool, error) {
+func IsValidP(inputPath string) (bool, error) {
 	file, err := os.Open(inputPath)
 	if err != nil {
 		return false, err
 	}
 	defer file.Close()
+	return IsValid(file)
+}
+
+// Checks file signature
+// http://en.wikipedia.org/wiki/List_of_file_signatures
+func IsValid(file *os.File) (bool, error) {
 	buff := make([]byte, 4)
 	n, err := file.Read(buff)
 	if err != nil {
@@ -66,7 +72,7 @@ func IsValid(inputPath string) (bool, error) {
 }
 
 func GetNumPages(inputPath string) (int, error) {
-	if ok, er := IsValid(inputPath); !ok {
+	if ok, er := IsValidP(inputPath); !ok {
 		if er != nil {
 			return 0, errors.New("IsValid: " + er.Error())
 		}
