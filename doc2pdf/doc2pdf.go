@@ -5,6 +5,7 @@ package doc2pdf
 import (
 	"bytes"
 	"errors"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -91,8 +92,9 @@ func ConvertToPDF(inputPath, outputPath string) error {
 		return errors.New("Only OSX and Ubuntu supported for now!")
 	}
 	buff := new(bytes.Buffer)
-	cmd.Stderr = buff
-	cmd.Stdout = buff
+	wtr := io.MultiWriter(buff, os.Stdout)
+	cmd.Stderr = wtr
+	cmd.Stdout = wtr
 	err := cmd.Start()
 	if err != nil {
 		return err
