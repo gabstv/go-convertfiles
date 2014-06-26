@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"runtime"
 )
 
@@ -87,7 +88,7 @@ func ConvertToPDF(inputPath, outputPath string) error {
 	if runtime.GOOS == "darwin" {
 		cmd = exec.Command("/Applications/LibreOffice.app/Contents/MacOS/python", "/usr/local/bin/unoconv", "-f", "pdf", "-o", outputPath, inputPath)
 	} else if runtime.GOOS == "linux" {
-		cmd = exec.Command("libreoffice", "--headless", "--convert-to", "pdf", "-o", outputPath, inputPath)
+		cmd = exec.Command("libreoffice", "--headless", "--convert-to", "pdf", "--outdir", "/tmp", inputPath)
 	} else {
 		return errors.New("Only OSX and Ubuntu supported for now!")
 	}
@@ -99,6 +100,7 @@ func ConvertToPDF(inputPath, outputPath string) error {
 	if err != nil {
 		return err
 	}
+	log.Println("[[doc verbose]]", "conversion started")
 	v, err := cmd.Process.Wait()
 	if err != nil {
 		return err
@@ -106,6 +108,12 @@ func ConvertToPDF(inputPath, outputPath string) error {
 	log.Println("[[doc verbose]]", v)
 	if v.Success() {
 		log.Println("[[doc verbose]]", buff.String())
+		// move file
+		if runtime.GOOS == "linux" {
+			enxt := path.Ext(inputPath)
+			er9 := os.Rename(inputPath[:len(inputPath)-len(enxt)]+".pdf", outputPath)
+			log.Println("er9", er9)
+		}
 		return nil
 	}
 	return errors.New(buff.String())
