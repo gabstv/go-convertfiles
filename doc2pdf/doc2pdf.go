@@ -82,6 +82,7 @@ func ConvertToPDF(inputPath, outputPath string) error {
 		return errors.New("Invalid file signature.")
 	}
 	var cmd *exec.Cmd
+	log.Println("doc2pdf GOOS", runtime.GOOS)
 	if runtime.GOOS == "darwin" {
 		cmd = exec.Command("/Applications/LibreOffice.app/Contents/MacOS/python", "/usr/local/bin/unoconv", "-f", "pdf", "-o", outputPath, inputPath)
 	} else if runtime.GOOS == "linux" {
@@ -100,6 +101,7 @@ func ConvertToPDF(inputPath, outputPath string) error {
 	if err != nil {
 		return err
 	}
+	log.Println("[[doc verbose]]", v)
 	if v.Success() {
 		log.Println("[[doc verbose]]", buff.String())
 		return nil
