@@ -57,7 +57,7 @@ func IsValid(file *os.File) (bool, error) {
 		return true, nil
 	}
 	// DOCX PROMISCUOUS MODE
-	if bytes.Compare(buff, []byte{0x50, 0x4B, 0x03, 0x04}) == 0 {
+	if bytes.Compare(buff[:4], []byte{0x50, 0x4B, 0x03, 0x04}) == 0 {
 		log.Printf("PROMISCUOUS DOC %x\n", buff)
 		return true, nil
 	}
