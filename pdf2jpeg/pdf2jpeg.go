@@ -34,11 +34,25 @@ type PDFInfo struct {
 	Pages  int
 }
 
-func defaultOptions() ConvertOptions {
+func OptHighQualityDefault() ConvertOptions {
 	return ConvertOptions{
 		true,
 		225,
 		60,
+		true,
+		60,
+		true,
+		true,
+		true,
+		true,
+	}
+}
+
+func OptLowQuality() ConvertOptions {
+	return ConvertOptions{
+		true,
+		0,
+		0,
 		true,
 		60,
 		true,
@@ -132,7 +146,7 @@ func GetInfo(inputPath string) (*PDFInfo, error) {
 }
 
 func ConvertToJpeg(inputPath, outputPath string, opts ...ConvertOptions) error {
-	opt := defaultOptions()
+	opt := OptHighQualityDefault()
 	if len(opts) > 0 {
 		opt = opts[0]
 	}
