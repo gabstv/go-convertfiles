@@ -28,6 +28,12 @@ type ConvertOptions struct {
 	SRGBColorspace bool
 }
 
+type PDFInfo struct {
+	Width  int
+	Height int
+	Pages  int
+}
+
 func defaultOptions() ConvertOptions {
 	return ConvertOptions{
 		true,
@@ -89,6 +95,40 @@ func GetNumPages(inputPath string) (int, error) {
 	}
 	trimmed := strings.TrimSpace(buff.String())
 	return strconv.Atoi(trimmed)
+}
+
+func GetInfo(inputPath string) (*PDFInfo, error) {
+	if ok, er := IsValidP(inputPath); !ok {
+		if er != nil {
+			return nil, errors.New("IsValid: " + er.Error())
+		}
+		return nil, errors.New("Invalid file signature.")
+	}
+	cmd := exec.Command("identify", "-format", "\"%w,%h,%n\"", inputPath)
+	buff := new(bytes.Buffer)
+	cmd.Stdout = buff
+	//cmd.Stderr = buff
+	err := cmd.Run()
+	if err != nil {
+		log.Println("ERROR RUNNING IDENTIFY COMMAND", err.Error())
+		return nil, err
+	}
+	trimmed := strings.TrimSpace(buff.String())
+	slices := strings.Split(trimmed, ",")
+	pdfi := &PDFInfo{}
+	if len(slices) < 3 {
+		return nil, errors.New("Could not get data! " + buff.String())
+	}
+	pdfi.Width, err = strconv.Atoi(slices[0])
+	if err != nil {
+		return pdfi, err
+	}
+	pdfi.Height, err = strconv.Atoi(slices[1])
+	if err != nil {
+		return pdfi, err
+	}
+	pdfi.Pages, err = strconv.Atoi(slices[2])
+	return pdfi, err
 }
 
 func ConvertToJpeg(inputPath, outputPath string, opts ...ConvertOptions) error {
