@@ -131,7 +131,7 @@ func GetInfo(inputPath string) (*PDFInfo, error) {
 	log.Println("trimmed: `" + trimmed + "`")
 	slices := strings.Split(trimmed, "/")
 	pdfi := &PDFInfo{}
-	if len(slices) != 3 {
+	/*if len(slices) != 3 {
 		return nil, errors.New("Could not get data! " + buff.String())
 	}
 	sl00 := strings.Split(slices[0], ",")
@@ -144,7 +144,23 @@ func GetInfo(inputPath string) (*PDFInfo, error) {
 	if err != nil {
 		return pdfi, err
 	}
-	pdfi.Pages, err = strconv.Atoi(slices[2])
+	pdfi.Pages, err = strconv.Atoi(slices[2])*/
+
+	if len(slices) < 3 {
+		return nil, errors.New("Could not get data! " + buff.String())
+	}
+	// temporary until real width/height is fixed!
+	mw := 0
+	for i := 0; i < len(slices)-1; i++ {
+		if v, er0 := strconv.Atoi(slices[i]); er0 == nil {
+			if v > mw {
+				mw = v
+			}
+		}
+	}
+	pdfi.Width = mw
+	pdfi.Height = mw
+	pdfi.Pages, err = strconv.Atoi(slices[len(slices)-1])
 	return pdfi, err
 }
 
