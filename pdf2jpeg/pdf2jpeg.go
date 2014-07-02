@@ -118,7 +118,7 @@ func GetInfo(inputPath string) (*PDFInfo, error) {
 		}
 		return nil, errors.New("Invalid file signature.")
 	}
-	cmd := exec.Command("identify", "-format", "%w,%h,%n", inputPath)
+	cmd := exec.Command("identify", "-format", "%w/%h/%n", inputPath)
 	buff := new(bytes.Buffer)
 	cmd.Stdout = buff
 	//cmd.Stderr = buff
@@ -129,16 +129,18 @@ func GetInfo(inputPath string) (*PDFInfo, error) {
 	}
 	trimmed := strings.TrimSpace(buff.String())
 	log.Println("trimmed: `" + trimmed + "`")
-	slices := strings.Split(trimmed, ",")
+	slices := strings.Split(trimmed, "/")
 	pdfi := &PDFInfo{}
-	if len(slices) < 3 {
+	if len(slices) != 3 {
 		return nil, errors.New("Could not get data! " + buff.String())
 	}
-	pdfi.Width, err = strconv.Atoi(slices[0])
+	sl00 := strings.Split(slices[0], ",")
+	pdfi.Width, err = strconv.Atoi(sl00[0])
 	if err != nil {
 		return pdfi, err
 	}
-	pdfi.Height, err = strconv.Atoi(slices[1])
+	sl01 := strings.Split(slices[1], ",")
+	pdfi.Height, err = strconv.Atoi(sl01[0])
 	if err != nil {
 		return pdfi, err
 	}
