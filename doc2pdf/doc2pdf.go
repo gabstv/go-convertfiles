@@ -61,7 +61,7 @@ func IsValid(file *os.File) (bool, error) {
 		log.Printf("PROMISCUOUS DOC %x\n", buff)
 		return true, nil
 	}
-	log.Printf("%x\n", buff)
+	//log.Printf("%x\n", buff)
 	return false, nil
 }
 
