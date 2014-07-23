@@ -111,7 +111,8 @@ func ConvertToPDF(inputPath, outputPath string) error {
 		// move file
 		if runtime.GOOS == "linux" {
 			enxt := path.Ext(inputPath)
-			er9 := os.Rename(inputPath[:len(inputPath)-len(enxt)]+".pdf", outputPath)
+			_, fn0 := path.Split(inputPath)
+			er9 := os.Rename(path.Join("/tmp", fn0[:len(fn0)-len(enxt)]+".pdf"), outputPath)
 			log.Println("er9", er9)
 		}
 		return nil
