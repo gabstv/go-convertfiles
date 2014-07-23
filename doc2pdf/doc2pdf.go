@@ -89,6 +89,7 @@ func ConvertToPDF(inputPath, outputPath string) error {
 		cmd = exec.Command("/Applications/LibreOffice.app/Contents/MacOS/python", "/usr/local/bin/unoconv", "-f", "pdf", "-o", outputPath, inputPath)
 	} else if runtime.GOOS == "linux" {
 		cmd = exec.Command("libreoffice", "--headless", "--convert-to", "pdf", "--outdir", "/tmp", inputPath)
+		log.Println("[[doc verbose]]", "libreoffice --headless --convert-to pdf --outdir /tmp "+inputPath)
 	} else {
 		return errors.New("Only OSX and Ubuntu supported for now!")
 	}
