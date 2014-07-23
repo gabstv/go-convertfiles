@@ -113,7 +113,9 @@ func ConvertToPDF(inputPath, outputPath string) error {
 			enxt := path.Ext(inputPath)
 			_, fn0 := path.Split(inputPath)
 			er9 := os.Rename(path.Join("/tmp", fn0[:len(fn0)-len(enxt)]+".pdf"), outputPath)
-			log.Println("er9", er9)
+			if er9 != nil {
+				log.Println("[[doc verbose]]", "linux rename error", er9)
+			}
 		}
 		return nil
 	}
